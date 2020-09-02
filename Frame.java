@@ -1,6 +1,8 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
@@ -26,27 +28,17 @@ public class Frame {
         screenX = frame.getWidth();
     }
 
-    public void begin() {
-        frame.setLayout(null);
-        JButton b = new JButton("BEGIN");
-        b.setBounds((screenX / 2) - 50, (screenY / 2) - 50, 100, 50);
-        pane.add(b);
-        b.addActionListener(e -> {
-            pane.removeAll();
-            screen2();
-        });
-    }
-    private JLabel setBackground()
-    {
-        ImageIcon ii = new ImageIcon("C:\\data\\veil_art.jpg");
+    private JLabel setBackground() throws IOException {
+        InputStream imgStream = Frame.class.getResourceAsStream("res/veil_art.jpg");
+        BufferedImage myImg = ImageIO.read(imgStream);
+        ImageIcon ii = new ImageIcon(myImg);
         JLabel bgImage = new JLabel(ii);
         pane.add(bgImage);
         bgImage.setBounds(0, 0, screenX, screenY);
         return bgImage;
     }
 
-
-    public void screen2() {
+    public void screen2() throws IOException {
         frame.setLayout(null);
         pane.repaint();
 
@@ -159,7 +151,11 @@ public class Frame {
         next.addActionListener(e -> {
             if (e.getSource() == next && x == 10) {
                 pane.removeAll();
-                finalscreen();
+                try {
+                    finalscreen();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
 
             }
 
@@ -238,18 +234,19 @@ public class Frame {
         String path = String.valueOf(1 + rd.nextInt(7));
         path = path + ".txt";
 
-        FileReader fin = new FileReader("C:\\data\\" + path);
-        BufferedReader bin = new BufferedReader(fin);
-        int i, j;
+        InputStream inp = Frame.class.getResourceAsStream("res\\" + path);
 
+        InputStreamReader isr=new InputStreamReader(inp);
+        BufferedReader bin = new BufferedReader(isr);
+
+        int i, j;
         for (i = 0; i < 10; i++) {
             for (j = 0; j < 6; j++)
                 ques[i][j] = bin.readLine();
             String t = bin.readLine();
         }
     }
-    void finalscreen()
-    {
+    void finalscreen() throws IOException {
 
         pane.repaint();
         JLabel bkg = setBackground();
@@ -269,7 +266,7 @@ public class Frame {
         bkg.add(fns);
         fns.setBounds((int) (screenX * 0.1), (int) (screenY * 0.8), (int) (screenX * 0.8), (int) (screenY * 0.08));
         fns.setBackground(new Color(255, 137, 2));
-        fns.setFont(new Font("BankGothic Lt BT", Font.PLAIN, 55));
+        fns.setFont(new Font("BankGothic Lt BT", Font.PLAIN, 45));
         fns.setForeground(Color.WHITE);
 
         res2.setForeground(Color.BLACK);
